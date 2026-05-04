@@ -108,6 +108,7 @@ export const openrouterService = {
         TONE & AUDIENCE:
         - Target Audience: UMKM owners (not customs experts). Be clear, helpful, and educational.
         - Tone: Professional but encouraging. Avoid gatekeeping jargon without explaining it.
+        - CONCISENESS (CRITICAL): Be extremely brief. No long paragraphs. Use bullet points. The goal is speed.
         
         STRICT LANGUAGE RULE: All outputs (explanation, questions, text, descriptions, trade insights, market trends, and plain_explanation) MUST be written in BAHASA INDONESIA.
         

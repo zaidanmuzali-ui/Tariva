@@ -24,10 +24,10 @@ const OPENROUTER_EMBED_MODEL = cleanEnv(process.env.OPENROUTER_EMBED_MODEL) || "
 // Daftar model gratis yang kompatibel dengan Tariva (JSON output, instruction following, multilingual ID)
 // Jika model pertama kena rate-limit (429), otomatis rotate ke model berikutnya
 const FREE_MODELS = [
-  "tencent/hy3-preview:free",                    // Tencent Hunyuan 3 (Powerful & Free)
+  "google/gemma-2-9b-it:free",                    // Gemma 2 9B (Fast & High Quality)
+  "tencent/hy3-preview:free",                    // Tencent Hunyuan 3
   "openrouter/free",                              // Auto-router fallback
   "meta-llama/llama-3.3-70b-instruct:free",       // Flagship Meta
-  "google/gemma-2-9b-it:free",                    // Gemma 2 9B
   "nvidia/llama-3.1-nemotron-70b-instruct:free",  // Nemotron 70B
 ];
 
@@ -47,7 +47,7 @@ function resetModelIndex(): void {
 async function callOpenRouterWithRotation(
   messages: { role: string; content: string }[],
   temperature = 0.7,
-  maxTokens = 2000
+  maxTokens = 1000
 ): Promise<{ text: string; model: string }> {
   const maxAttempts = FREE_MODELS.length;
   let lastError: any = null;
@@ -467,7 +467,7 @@ app.post("/api/ai/search", optionalAuthenticateUser, async (req, res) => {
     const { text, model } = await callOpenRouterWithRotation(
       [{ role: "user", content: prompt }],
       0.7,
-      2000
+      1000
     );
 
     console.log(`[AI Search] ✓ Response received from: ${model}. First 200 chars: ${text.substring(0, 200)}`);

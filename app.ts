@@ -221,8 +221,7 @@ app.post("/api/payment/checkout", authenticateUser, async (req, res) => {
       customer_details: {
         first_name: user?.user_metadata?.full_name?.split(' ')[0] || "Customer",
         last_name: user?.user_metadata?.full_name?.split(' ').slice(1).join(' ') || "",
-        email: user?.email || "customer@tariva.com",
-        user_id: user.id
+        email: user?.email || "customer@tariva.com"
       },
       item_details: [
         {
@@ -239,10 +238,18 @@ app.post("/api/payment/checkout", authenticateUser, async (req, res) => {
     };
 
     const transaction = await snap.createTransaction(parameter);
+    console.log(`[Payment] ✓ Snap Token generated for ${user.id}: ${transaction.token}`);
     res.json(transaction);
   } catch (error: any) {
-    console.error("Midtrans Token Error:", error);
-    res.status(500).json({ error: "Midtrans Transaction failed", message: error.message });
+    console.error("Midtrans Transaction Error:", error.message || error);
+    if (error.ApiResponse) {
+      console.error("Midtrans API Response:", JSON.stringify(error.ApiResponse));
+    }
+    res.status(500).json({ 
+      error: "Midtrans Transaction failed", 
+      message: error.message,
+      details: error.ApiResponse?.error_messages || []
+    });
   }
 });
 

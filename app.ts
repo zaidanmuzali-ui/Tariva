@@ -1,3 +1,4 @@
+console.log("Loading app module...");
 import express, { Request, Response, NextFunction } from "express";
 import { createServer as createViteServer } from "vite";
 import path from "path";

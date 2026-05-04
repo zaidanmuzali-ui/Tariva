@@ -50,6 +50,12 @@ export default function App() {
   const [activeTab, setActiveTab] = React.useState<Page>('search');
   const [legalSection, setLegalSection] = React.useState<'privacy' | 'terms' | 'payment'>('privacy');
   const [isAuthModalOpen, setIsAuthModalOpen] = React.useState(false);
+  const [authModalMode, setAuthModalMode] = React.useState<'login' | 'register'>('login');
+
+  const openAuth = (mode: 'login' | 'register' = 'login') => {
+    setAuthModalMode(mode);
+    setIsAuthModalOpen(true);
+  };
 
   React.useEffect(() => {
     // Apply theme to document
@@ -111,15 +117,19 @@ export default function App() {
     });
 
     const handleNavigatePricing = () => setActiveTab('pricing');
-    const handleOpenAuthModal = () => setIsAuthModalOpen(true);
+    const handleNavigatePricing = () => setActiveTab('pricing');
+    const handleOpenAuthModal = (e: any) => {
+      const mode = e.detail?.mode || 'login';
+      openAuth(mode);
+    };
     
     window.addEventListener('navigate-pricing', handleNavigatePricing);
-    window.addEventListener('open-auth-modal', handleOpenAuthModal);
+    window.addEventListener('open-auth-modal', handleOpenAuthModal as any);
 
     return () => {
       subscription.unsubscribe();
       window.removeEventListener('navigate-pricing', handleNavigatePricing);
-      window.removeEventListener('open-auth-modal', handleOpenAuthModal);
+      window.removeEventListener('open-auth-modal', handleOpenAuthModal as any);
     };
   }, []);
 
@@ -257,13 +267,13 @@ export default function App() {
               <Button 
                 variant="ghost" 
                 className="text-text-secondary dark:text-slate-400 hover:text-text-main h-9 px-4 font-semibold"
-                onClick={() => setIsAuthModalOpen(true)}
+                onClick={() => openAuth('login')}
               >
                 {t('Masuk', 'Sign In')}
               </Button>
               <Button 
                 className="bg-primary-brand text-white hover:bg-primary-dark rounded-lg h-9 px-5 font-semibold shadow-sm transition-all hover:scale-[1.02] active:scale-95"
-                onClick={() => setIsAuthModalOpen(true)}
+                onClick={() => openAuth('register')}
               >
                 {t('Mulai Sekarang', 'Get Started')}
               </Button>
@@ -384,13 +394,13 @@ export default function App() {
                       <Button 
                         variant="outline" 
                         className="w-full justify-center rounded-lg border-border-brand h-11 font-semibold"
-                        onClick={() => { setIsAuthModalOpen(true); setIsMenuOpen(false); }}
+                        onClick={() => { openAuth('login'); setIsMenuOpen(false); }}
                       >
                         Masuk
                       </Button>
                       <Button 
                         className="w-full bg-primary-brand text-white rounded-lg h-11 font-semibold"
-                        onClick={() => { setIsAuthModalOpen(true); setIsMenuOpen(false); }}
+                        onClick={() => { openAuth('register'); setIsMenuOpen(false); }}
                       >
                         Mulai Sekarang
                       </Button>
@@ -423,7 +433,10 @@ export default function App() {
                 >
                   <X size={24} />
                 </Button>
-                <Auth onClose={() => setIsAuthModalOpen(false)} />
+                <Auth 
+                  onClose={() => setIsAuthModalOpen(false)} 
+                  initialMode={authModalMode}
+                />
               </div>
             </motion.div>
           )}

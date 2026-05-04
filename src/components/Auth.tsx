@@ -8,10 +8,11 @@ import { toast } from 'sonner';
 
 interface AuthProps {
   onClose: () => void;
+  initialMode?: 'login' | 'register';
 }
 
-export function Auth({ onClose }: AuthProps) {
-  const [mode, setMode] = useState<'login' | 'register'>('login');
+export function Auth({ onClose, initialMode = 'login' }: AuthProps) {
+  const [mode, setMode] = useState<'login' | 'register'>(initialMode);
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

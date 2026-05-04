@@ -73,23 +73,22 @@ async function callOpenRouterWithRotation(
 
       if (response.ok) {
         const data: any = await response.json();
-        const text = data.choices?.[0]?.message?.content || "No response";
+        const text = data.choices?.[0]?.message?.content;
+        
+        if (!text || text.trim().length === 0) {
+          console.warn(`[AI] ⚠ Model ${model} returned empty content. Rotating...`);
+          lastError = new Error(`Empty content from ${model}`);
+          continue;
+        }
+
         console.log(`[AI] ✓ Success with model: ${model}`);
         return { text, model };
       }
 
-      // Rate limited — rotate to next model
-      if (response.status === 429) {
-        const errorText = await response.text();
-        console.warn(`[AI] ⚠ Model ${model} rate-limited (429). Rotating...`);
-        lastError = new Error(`Rate limited on ${model}`);
-        continue;
-      }
-
-      // Other error — still try next model
+      // Rate limited or other error — rotate to next model
       const errorText = await response.text();
       console.warn(`[AI] ⚠ Model ${model} returned ${response.status}: ${errorText.substring(0, 200)}`);
-      lastError = new Error(errorText);
+      lastError = new Error(errorText || `HTTP ${response.status}`);
       continue;
 
     } catch (fetchError: any) {

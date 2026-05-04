@@ -39,15 +39,13 @@ export function Pricing({ onBack, onContact }: { onBack: () => void, onContact?:
   const isPro = user?.user_metadata?.plan === 'pro';
 
   const handleUpgradeToPro = async () => {
-    if (!user) {
-      toast.error('Silakan login terlebih dahulu untuk upgrade ke Pro.');
-      // You might want to trigger auth modal here
-      return;
-    }
+    // PROMO: Bypass payment logic
+    toast.success('Promo Ramadan: Nikmati semua fitur PRO secara Gratis!');
+    onBack();
+    return;
+  };
 
-    setLoadingPro(true);
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session } } = await supabase.auth.getSession();
       const response = await fetch('/api/payment/checkout', {
         method: 'POST',
         headers: {
@@ -149,11 +147,10 @@ export function Pricing({ onBack, onContact }: { onBack: () => void, onContact?:
         </p>
 
         <div className="flex justify-center px-4">
-          <div className="inline-flex items-center gap-2 bg-amber-50 text-amber-700 text-xs md:text-sm font-medium px-4 py-2 md:px-5 md:py-2.5 rounded-2xl md:rounded-full border border-amber-200 max-w-lg text-center leading-tight">
-            <DollarSign size={16} className="flex-shrink-0" />
+          <div className="inline-flex items-center gap-2 bg-primary-brand text-white text-xs md:text-sm font-bold px-6 py-3 rounded-2xl md:rounded-full shadow-lg shadow-primary-brand/30 border border-primary-brand/20 animate-pulse">
+            <CheckCircle2 size={18} className="flex-shrink-0" />
             <span>
-              Denda salah klasifikasi HS Code bisa mencapai ratusan juta rupiah. 
-              Pro plan mulai dari harga yang jauh lebih terjangkau.
+              RAMADAN PROMO: Semua Fitur PRO Gratis sampai 11 Mei 2026! 🌙
             </span>
           </div>
         </div>
@@ -245,9 +242,9 @@ export function Pricing({ onBack, onContact }: { onBack: () => void, onContact?:
                 <div className="space-y-1">
                   <div className="flex items-baseline gap-1">
                     <span className="text-3xl md:text-4xl font-black">
-                      Rp {billingCycle === 'monthly' ? '79.000' : Math.round(yearlyPrice/12).toLocaleString('id-ID')}
+                      Rp 0
                     </span>
-                    <span className="text-white/80 text-sm md:text-base font-normal">/bulan</span>
+                    <span className="text-white/80 text-sm md:text-base font-normal">/sampai 11 Mei</span>
                   </div>
                   <AnimatePresence mode="wait">
                     {billingCycle === 'yearly' ? (

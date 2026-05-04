@@ -43,6 +43,9 @@ function resetModelIndex(): void {
   currentModelIndex = 0;
 }
 
+// PROMO TOGGLE: Set to true to give everyone PRO access until May 11, 2026
+const PROMO_FREE_PRO_ACTIVE = true; 
+
 // Helper: Call OpenRouter with auto model rotation on 429
 async function callOpenRouterWithRotation(
   messages: { role: string; content: string }[],

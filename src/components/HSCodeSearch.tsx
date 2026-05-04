@@ -100,7 +100,9 @@ export function HSCodeSearch() {
 
     // 0. Auth Check with Guest Limit
     const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
+    const PROMO_ACTIVE = true; // Set to false to revert
+
+    if (!session && !PROMO_ACTIVE) {
       const guestCounter = parseInt(localStorage.getItem('tariva_guest_searches') || '0');
       if (guestCounter >= 3) {
         toast.error("Batas pencarian tamu (3 kali) telah tercapai. Silakan Masuk untuk melanjutkan pencarian tanpa batas.", {

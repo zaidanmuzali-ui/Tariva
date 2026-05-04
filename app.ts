@@ -462,33 +462,40 @@ app.post("/api/ai/search", optionalAuthenticateUser, async (req, res) => {
 
   try {
     const { prompt } = req.body;
+    
+    if (!prompt) {
+      console.error("[AI Search] ✗ No prompt provided in request body");
+      return res.status(400).json({ error: "Missing prompt" });
+    }
 
-    console.log(`[AI Search] Starting with model rotation (${FREE_MODELS.length} models available)`);
+    console.log(`[AI Search] Starting search. Prompt size: ${prompt.length} chars. Models: ${FREE_MODELS.length}`);
 
+    const startTime = Date.now();
     const { text, model } = await callOpenRouterWithRotation(
       [{ role: "user", content: prompt }],
       0.7,
       1000
     );
+    const duration = Date.now() - startTime;
 
-    console.log(`[AI Search] ✓ Response received from: ${model}. First 200 chars: ${text.substring(0, 200)}`);
+    console.log(`[AI Search] ✓ Success with ${model} in ${duration}ms. Response size: ${text?.length || 0} chars.`);
+
+    if (typeof text !== 'string') {
+       console.error("[AI Search] ✗ Response text is not a string:", typeof text);
+       return res.status(500).json({ error: "AI returned invalid data format" });
+    }
+
     res.json({ text });
   } catch (error: any) {
-    let message = error.message || "AI Analysis Failed";
-    console.error(`[AI Search] ✗ All models failed:`, message);
+    const errorMessage = error.message || "Unknown AI error";
+    console.error(`[AI Search] ✗ FATAL ERROR:`, errorMessage);
+    console.error(`[AI Search] Stack Trace:`, error.stack);
 
-    if (message.toLowerCase().includes("rate limit") || message.toLowerCase().includes("semua model")) {
-      return res.status(429).json({ 
-        error: "RATE_LIMIT", 
-        message: "Semua model AI sedang sibuk. Mohon tunggu 30 detik lalu coba lagi." 
-      });
+    if (errorMessage.toLowerCase().includes("rate limit") || errorMessage.toLowerCase().includes("busy")) {
+      return res.status(429).json({ error: errorMessage });
     }
-
-    if (message.toLowerCase().includes("invalid") || message.toLowerCase().includes("unauthorized") || message.toLowerCase().includes("401")) {
-      return res.status(401).json({ error: "INVALID_KEY", message: "API Key tidak valid atau format salah." });
-    }
-
-    res.status(500).json({ error: message });
+    
+    res.status(500).json({ error: errorMessage });
   }
 });
 

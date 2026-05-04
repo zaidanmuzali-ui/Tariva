@@ -500,14 +500,41 @@ app.post("/api/ai/embed", optionalAuthenticateUser, async (req, res) => {
     // Fallback: Use HuggingFace Inference API (free, no key required for limited use)
     // OR return zero-vector if embeddings fail (graceful degradation)
     
-    console.log(`[Embedding] Text length: ${text.length}`);
+    // 1. Try OpenRouter Qwen3 Embedding (Primary)
+    try {
+      const orResponse = await fetch("https://openrouter.ai/api/v1/embeddings", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "qwen/qwen3-embedding-8b",
+          input: text
+        })
+      });
 
-    // Try HuggingFace Inference API free tier (no auth required for some models)
+      if (orResponse.ok) {
+        const data: any = await orResponse.json();
+        const embedding = data.data?.[0]?.embedding;
+        if (embedding) {
+          console.log(`[Embedding] OpenRouter Qwen3 success, dim: ${embedding.length}`);
+          return res.json({ embedding });
+        }
+      } else {
+        const errorText = await orResponse.text();
+        console.warn(`[Embedding] OpenRouter failed (${orResponse.status}): ${errorText.substring(0, 100)}`);
+      }
+    } catch (orError: any) {
+      console.warn(`[Embedding] OpenRouter fetch error:`, orError.message);
+    }
+
+    // 2. Fallback: Try HuggingFace Inference API
     try {
       const hfResponse = await fetch(
         "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2",
         {
-          headers: { Authorization: `Bearer hf_kMbpqKnNkzXXXXXXXXXXXXXXXXXXXXXXX` }, // Free public model
+          headers: { Authorization: `Bearer hf_kMbpqKnNkzXXXXXXXXXXXXXXXXXXXXXXX` },
           method: "POST",
           body: JSON.stringify({ inputs: text }),
         }

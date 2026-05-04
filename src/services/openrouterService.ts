@@ -121,15 +121,17 @@ export const openrouterService = {
         4. Use current knowledge to verify Lartas (prohibitions/restrictions) from Indonesian Customs.
         
         CONFIDENCE & CLARIFICATION RULES (CRITICAL):
-        - Your primary goal is to find the exact 8-digit HS Code from BTKI 2022.
-        - USER INFO (follow-up answers) are ABSOLUTE FACTS. If the user answered a clarifying question, you MUST use that information to narrow down the classification. For example, if the user says "roasted", you cannot classify it as "unroasted".
-        - If the product description or follow-up answers are still vague:
-          1. Set "confidence" to less than 75.
-          2. You MUST provide 1-3 clarifying questions in the "questions" array.
-          3. Each question MUST have "text" and "options" (2-5 choices).
-          4. ALL question content MUST be in BAHASA INDONESIA.
-        - If the user's answers and description are now specific enough, "questions" MUST be [].
-        - DO NOT guess a specific 8-digit code if the user's input is still ambiguous. Ask more questions.
+        - ALUR KERJA: Gunakan data dari "BTKI CONTEXT" (RAG) sebagai dasar.
+        - Jika hasil RAG memiliki beberapa opsi yang mirip, gunakan opsi tersebut untuk membuat pertanyaan klarifikasi.
+        - USER INFO (follow-up answers) adalah FAKTA ABSOLUT. Gunakan untuk mempersempit klasifikasi dari hasil RAG.
+        - Jika informasi masih kurang spesifik untuk memilih satu HS Code 8-digit dari RAG:
+          1. Set "confidence" < 75.
+          2. Wajib berikan 1-3 pertanyaan klarifikasi berdasarkan perbedaan opsi di RAG.
+        - Jika sudah spesifik, "questions" harus [].
+        
+        OUTPUT DIVISION:
+        - RAG DATA: HS Code dan Tarif (BM, PPN, PPh) harus diambil secara akurat dari BTKI CONTEXT.
+        - HY3 ANALYSIS: Gunakan kecerdasan model (Hunyuan 3) untuk melengkapi sisanya: penjelasan plain_explanation, dokumen (docs), wawasan perdagangan (trade_insights), dan tren pasar.
         
         BTKI CONTEXT: ${btkiContext}
         FEEDBACK: ${feedbackContext}

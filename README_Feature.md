@@ -14,12 +14,16 @@ Dokumen ini berisi penjelasan detail mengenai fitur-fitur di Tariva. Seluruh AI 
 
 ## 2. AI Smart Search (Core Feature)
 - **RAG Implementation**: Menggabungkan data dari database BTKI (via Supabase RPC `match_btki`) dengan kemampuan reasoning LLM.
+- **Embedding Model**: Menggunakan `qwen/qwen3-embedding-8b` via OpenRouter untuk akurasi semantik yang lebih tinggi.
 - **Clarification Flow**: 
-  - Jika input user ambigu (misal: "kopi"), AI akan memberikan 1-3 pertanyaan klarifikasi.
+  - **Alur Kerja**: Hasil pencarian RAG awal digunakan sebagai dasar untuk membuat pertanyaan klarifikasi jika terdapat beberapa opsi yang mirip.
   - Sisi klien (`HSCodeSearch.tsx`) akan menampilkan UI tanya-jawab sebelum menampilkan hasil akhir.
-  - **PENTING**: Jawaban dari user (`followUpAnswers`) dianggap sebagai FAKTA ABSOLUT oleh AI untuk penyempitan hasil.
+  - **PENTING**: Jawaban dari user (`followUpAnswers`) dianggap sebagai FAKTA ABSOLUT oleh AI untuk penyempitan hasil dari data RAG.
 - **Confidence Scoring**: 
-  - Jika AI tidak yakin 100% pada kode 8-digit, `confidence` harus < 75 dan `questions` tidak boleh kosong.
+  - Jika AI tidak yakin 100% pada satu kode 8-digit dari hasil RAG, `confidence` harus < 75 dan `questions` tidak boleh kosong.
+- **Division of Output**: 
+  - Data HS Code dan Tarif wajib diambil dari hasil RAG (BTKI Context).
+  - Analisis lainnya (dokumen, insight, tren) diproses oleh model Hunyuan 3 (hy3).
 - **Model**: Menggunakan `tencent/hy3-preview:free` sebagai model utama di OpenRouter (via `app.ts`).
 
 ## 3. Pembayaran & Langganan (Pro Plan)

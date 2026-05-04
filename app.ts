@@ -24,10 +24,11 @@ const OPENROUTER_EMBED_MODEL = cleanEnv(process.env.OPENROUTER_EMBED_MODEL) || "
 // Daftar model gratis yang kompatibel dengan Tariva (JSON output, instruction following, multilingual ID)
 // Jika model pertama kena rate-limit (429), otomatis rotate ke model berikutnya
 const FREE_MODELS = [
-  "openrouter/free",                              // Auto-router (paling stabil, pilih model terbaik otomatis)
-  "meta-llama/llama-3.3-70b-instruct:free",       // Flagship Meta (Sangat sering tersedia)
-  "google/gemma-2-9b-it:free",                    // Gemma 2 9B (Stabil & native JSON JSON)
-  "nvidia/llama-3.1-nemotron-70b-instruct:free",  // Nemotron 70B (Bagus untuk instruksi ketat)
+  "tencent/hy3-preview:free",                    // Tencent Hunyuan 3 (Powerful & Free)
+  "openrouter/free",                              // Auto-router fallback
+  "meta-llama/llama-3.3-70b-instruct:free",       // Flagship Meta
+  "google/gemma-2-9b-it:free",                    // Gemma 2 9B
+  "nvidia/llama-3.1-nemotron-70b-instruct:free",  // Nemotron 70B
 ];
 
 let currentModelIndex = 0;

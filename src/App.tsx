@@ -117,7 +117,6 @@ export default function App() {
     });
 
     const handleNavigatePricing = () => setActiveTab('pricing');
-    const handleNavigatePricing = () => setActiveTab('pricing');
     const handleOpenAuthModal = (e: any) => {
       const mode = e.detail?.mode || 'login';
       openAuth(mode);

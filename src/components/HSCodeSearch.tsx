@@ -52,6 +52,7 @@ export function HSCodeSearch() {
   const [questions, setQuestions] = useState<{ text: string, options: string[] }[]>([]);
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
+  const [searchHistory, setSearchHistory] = useState<any[]>([]);
   const [showOtherInput, setShowOtherInput] = useState<boolean[]>([]);
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -90,10 +91,11 @@ export function HSCodeSearch() {
     if (e) e.preventDefault();
     setQuestions([]);
     setAnswers([]);
+    setSearchHistory([]);
     await executeSearch(query);
   };
 
-  const executeSearch = async (searchQuery: string, followUpMode = false) => {
+  const executeSearch = async (searchQuery: string, followUpMode = false, existingHistory: any[] = []) => {
     if (!searchQuery.trim()) return;
 
     // 0. Auth Check with Guest Limit
@@ -139,10 +141,21 @@ export function HSCodeSearch() {
     abortControllerRef.current = controller;
 
     try {
+      // Accumulate history
+      let combinedHistory = [...existingHistory];
+      if (followUpMode && questions.length > 0) {
+        const currentQA = questions.map((q, i) => ({
+          question: q.text,
+          answer: answers[i]
+        })).filter(qa => qa.answer && qa.answer.trim());
+        combinedHistory = [...searchHistory, ...currentQA];
+        setSearchHistory(combinedHistory);
+      }
+
       const aiResponse = await openrouterService.smartSearch(
         searchQuery, 
         controller.signal, 
-        followUpMode ? answers : undefined,
+        combinedHistory.length > 0 ? combinedHistory.map(h => `${h.question}: ${h.answer}`) : undefined,
         selectedCountry,
         tradeMode,
         (msg) => setLoadingMessage(msg)

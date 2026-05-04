@@ -20,7 +20,7 @@ Dokumen ini berisi penjelasan detail mengenai fitur-fitur di Tariva. Seluruh AI 
   - Sisi klien (`HSCodeSearch.tsx`) akan menampilkan UI tanya-jawab sebelum menampilkan hasil akhir.
   - **PENTING**: Jawaban dari user (`followUpAnswers`) dianggap sebagai FAKTA ABSOLUT oleh AI untuk penyempitan hasil dari data RAG.
 - **Confidence Scoring**: 
-  - Jika AI tidak yakin 100% pada satu kode 8-digit dari hasil RAG, `confidence` harus < 75 dan `questions` tidak boleh kosong.
+  - Jika AI tidak yakin 100% pada satu kode 8-digit dari hasil RAG, `confidence` harus < 75 dan `questions` tidak boleh kosong (Maksimal 5 pertanyaan).
 - **Division of Output**: 
   - Data HS Code dan Tarif wajib diambil dari hasil RAG (BTKI Context).
   - Analisis lainnya (dokumen, insight, tren) diproses oleh model Hunyuan 3 (hy3).

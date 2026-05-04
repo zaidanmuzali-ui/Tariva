@@ -126,7 +126,7 @@ export const openrouterService = {
         - USER INFO (follow-up answers) adalah FAKTA ABSOLUT. Gunakan untuk mempersempit klasifikasi dari hasil RAG.
         - Jika informasi masih kurang spesifik untuk memilih satu HS Code 8-digit dari RAG:
           1. Set "confidence" < 75.
-          2. Wajib berikan 1-3 pertanyaan klarifikasi berdasarkan perbedaan opsi di RAG.
+          2. Wajib berikan 1-5 pertanyaan klarifikasi berdasarkan perbedaan opsi di RAG.
         - Jika sudah spesifik, "questions" harus [].
         
         OUTPUT DIVISION:

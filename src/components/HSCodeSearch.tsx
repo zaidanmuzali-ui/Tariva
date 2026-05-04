@@ -520,10 +520,10 @@ export function HSCodeSearch() {
             <Button 
               variant="outline" 
               size="sm"
-              onClick={() => window.dispatchEvent(new CustomEvent('open-auth-modal'))}
+              onClick={() => window.dispatchEvent(new CustomEvent('open-auth-modal', { detail: { mode: 'register' } }))}
               className="h-8 rounded-lg text-xs font-black border-primary-brand/20 text-primary-brand hover:bg-primary-brand hover:text-white transition-all bg-white shadow-sm"
             >
-              Masuk Sekarang
+              Daftar Sekarang
             </Button>
           </motion.div>
         )}

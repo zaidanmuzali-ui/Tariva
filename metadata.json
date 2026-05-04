@@ -1,0 +1,10 @@
+{
+  "name": "TARIVA - AI HS Code Search SaaS",
+  "description": "Smart SaaS for HS Code search in Indonesia using AI-powered RAG and direct Customs database integration.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "AI-powered search",
+    "Real-time HS Code tracking",
+    "Customs regulation insights"
+  ]
+}

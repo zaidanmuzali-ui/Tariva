@@ -24,11 +24,11 @@ const OPENROUTER_EMBED_MODEL = cleanEnv(process.env.OPENROUTER_EMBED_MODEL) || "
 // Daftar model gratis yang kompatibel dengan Tariva (JSON output, instruction following, multilingual ID)
 // Jika model pertama kena rate-limit (429), otomatis rotate ke model berikutnya
 const FREE_MODELS = [
-  "tencent/hy3-preview:free",                    // Tencent Hunyuan 3 (Primary Choice)
-  "google/gemma-2-9b-it:free",                    // Gemma 2 9B (Fallback)
+  "google/gemma-2-9b-it:free",                    // Gemma 2 9B
+  "meta-llama/llama-3.1-8b-instruct:free",       // Llama 3.1 8B (Fast & Stable)
   "openrouter/free",                              // Auto-router fallback
+  "tencent/hy3-preview:free",                    // Tencent Hunyuan 3
   "meta-llama/llama-3.3-70b-instruct:free",       // Flagship Meta
-  "nvidia/llama-3.1-nemotron-70b-instruct:free",  // Nemotron 70B
 ];
 
 let currentModelIndex = 0;
@@ -62,7 +62,8 @@ async function callOpenRouterWithRotation(
         headers: {
           "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
           "Content-Type": "application/json",
-          "HTTP-Referer": "https://tariva.com",
+          "HTTP-Referer": "https://tariva.vercel.app",
+          "X-Title": "Tariva",
         },
         body: JSON.stringify({ 
           model, 
@@ -432,7 +433,7 @@ app.post("/api/search/context", async (req, res) => {
         .from('BTKI')
         .select('HS_Code, Uraian_Barang, Bea_Masuk_Import_Duty, Bea_Keluar_Export_Duty, PPN_VAT, PPnBM_Luxury_Tax')
         .or(orString)
-        .limit(5);
+        .limit(10);
         
       if (fallbackData) contextData = fallbackData;
     }
@@ -500,36 +501,7 @@ app.post("/api/ai/embed", optionalAuthenticateUser, async (req, res) => {
     // Fallback: Use HuggingFace Inference API (free, no key required for limited use)
     // OR return zero-vector if embeddings fail (graceful degradation)
     
-    // 1. Try OpenRouter Qwen3 Embedding (Primary)
-    try {
-      const orResponse = await fetch("https://openrouter.ai/api/v1/embeddings", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "qwen/qwen3-embedding-8b",
-          input: text
-        })
-      });
-
-      if (orResponse.ok) {
-        const data: any = await orResponse.json();
-        const embedding = data.data?.[0]?.embedding;
-        if (embedding) {
-          console.log(`[Embedding] OpenRouter Qwen3 success, dim: ${embedding.length}`);
-          return res.json({ embedding });
-        }
-      } else {
-        const errorText = await orResponse.text();
-        console.warn(`[Embedding] OpenRouter failed (${orResponse.status}): ${errorText.substring(0, 100)}`);
-      }
-    } catch (orError: any) {
-      console.warn(`[Embedding] OpenRouter fetch error:`, orError.message);
-    }
-
-    // 2. Fallback: Try HuggingFace Inference API
+    // Use HuggingFace Inference API as primary (384 dimensions for MiniLM compatibility)
     try {
       const hfResponse = await fetch(
         "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2",

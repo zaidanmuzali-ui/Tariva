@@ -780,7 +780,7 @@ export function HSCodeSearch() {
                       {showOtherInput[currentQuestionIdx] && (
                         <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 'auto', height: 'auto' }} className="pt-2">
                            <Input 
-                             value={answers[currentQuestionIdx]} 
+                             value={answers[currentQuestionIdx] || ''} 
                              onChange={(e) => handleAnswerChange(currentQuestionIdx, e.target.value)}
                              placeholder="Ketik detail di sini..."
                              className="h-12 rounded-xl bg-bg-app border-primary-brand/30 shadow-inner"

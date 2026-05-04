@@ -501,7 +501,38 @@ app.post("/api/ai/embed", optionalAuthenticateUser, async (req, res) => {
     // Fallback: Use HuggingFace Inference API (free, no key required for limited use)
     // OR return zero-vector if embeddings fail (graceful degradation)
     
-    // Use HuggingFace Inference API as primary (384 dimensions for MiniLM compatibility)
+    // 1. Try OpenRouter Llama Nemotron Embed (Primary)
+    try {
+      const orResponse = await fetch("https://openrouter.ai/api/v1/embeddings", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json",
+          "HTTP-Referer": "https://tariva.vercel.app",
+          "X-Title": "Tariva",
+        },
+        body: JSON.stringify({
+          model: "nvidia/llama-nemotron-embed-vl-1b-v2",
+          input: text
+        })
+      });
+
+      if (orResponse.ok) {
+        const data: any = await orResponse.json();
+        const embedding = data.data?.[0]?.embedding;
+        if (embedding) {
+          console.log(`[Embedding] OpenRouter success, dim: ${embedding.length}`);
+          return res.json({ embedding });
+        }
+      } else {
+        const errorText = await orResponse.text();
+        console.warn(`[Embedding] OpenRouter failed (${orResponse.status}): ${errorText.substring(0, 100)}`);
+      }
+    } catch (orError: any) {
+      console.warn(`[Embedding] OpenRouter fetch error:`, orError.message);
+    }
+
+    // 2. Fallback: Try HuggingFace Inference API
     try {
       const hfResponse = await fetch(
         "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2",

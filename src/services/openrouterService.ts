@@ -122,13 +122,14 @@ export const openrouterService = {
         
         CONFIDENCE & CLARIFICATION RULES (CRITICAL):
         - Your primary goal is to find the exact 8-digit HS Code from BTKI 2022.
-        - If the product description is vague (e.g., "coffee", "shirt", "iron") or has multiple possibilities:
+        - USER INFO (follow-up answers) are ABSOLUTE FACTS. If the user answered a clarifying question, you MUST use that information to narrow down the classification. For example, if the user says "roasted", you cannot classify it as "unroasted".
+        - If the product description or follow-up answers are still vague:
           1. Set "confidence" to less than 75.
           2. You MUST provide 1-3 clarifying questions in the "questions" array.
           3. Each question MUST have "text" and "options" (2-5 choices).
           4. ALL question content MUST be in BAHASA INDONESIA.
-        - If the description is specific enough for a precise 8-digit HS Code, "questions" should be [].
-        - DO NOT guess a specific 8-digit code if the user's input is ambiguous. Ask questions first.
+        - If the user's answers and description are now specific enough, "questions" MUST be [].
+        - DO NOT guess a specific 8-digit code if the user's input is still ambiguous. Ask more questions.
         
         BTKI CONTEXT: ${btkiContext}
         FEEDBACK: ${feedbackContext}

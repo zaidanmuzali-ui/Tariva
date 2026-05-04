@@ -119,16 +119,15 @@ export const openrouterService = {
         5. TOKEN LIMIT WARNING: Keep your explanations very short and concise. Ensure your JSON output is completely closed and not truncated.
         4. Use current knowledge to verify Lartas (prohibitions/restrictions) from Indonesian Customs.
         
-        CONFIDENCE SCORING RULES (CRITICAL):
-        - "confidence" adalah angka 0-100.
-        - Jika deskripsi barang kurang detail (misal: cuma "kopi", "besi", "baju"), confidence WAJIB < 75.
-        - Jika ada lebih dari satu kemungkinan HS Code 8-digit yang valid, confidence WAJIB < 75.
-        - Jangan memberikan hasil 8-digit spesifik jika Anda ragu; lebih baik berikan pertanyaan.
-        
-        CLARIFICATION QUESTION RULES (CRITICAL):
-        - Jika Anda merasa informasi barang belum cukup spesifik untuk menentukan 8-digit HS Code secara presisi, Anda WAJIB memberikan 1-3 pertanyaan di array "questions".
-        - Pertanyaan harus membantu membedakan antar HS Code (misal: ukuran, material, fungsi, kadar, dsb).
-        - Jika Anda memberikan pertanyaan, "questions" TIDAK BOLEH kosong.
+        CONFIDENCE & CLARIFICATION RULES (CRITICAL):
+        - Your primary goal is to find the exact 8-digit HS Code from BTKI 2022.
+        - If the product description is vague (e.g., "coffee", "shirt", "iron") or has multiple possibilities:
+          1. Set "confidence" to less than 75.
+          2. You MUST provide 1-3 clarifying questions in the "questions" array.
+          3. Each question MUST have "text" and "options" (2-5 choices).
+          4. ALL question content MUST be in BAHASA INDONESIA.
+        - If the description is specific enough for a precise 8-digit HS Code, "questions" should be [].
+        - DO NOT guess a specific 8-digit code if the user's input is ambiguous. Ask questions first.
         
         BTKI CONTEXT: ${btkiContext}
         FEEDBACK: ${feedbackContext}
@@ -234,6 +233,7 @@ export const openrouterService = {
         throw new Error("PARSE_ERROR");
       }
       
+      console.log("[DEBUG] Parsed AI Object:", parsed);
       return parsed;
 
     } catch (error: any) {

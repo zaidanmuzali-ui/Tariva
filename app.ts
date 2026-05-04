@@ -24,11 +24,11 @@ const OPENROUTER_EMBED_MODEL = cleanEnv(process.env.OPENROUTER_EMBED_MODEL) || "
 // Daftar model gratis yang kompatibel dengan Tariva (JSON output, instruction following, multilingual ID)
 // Jika model pertama kena rate-limit (429), otomatis rotate ke model berikutnya
 const FREE_MODELS = [
-  "qwen/qwen3-coder-480b-a35b-instruct",          // Qwen 3 Coder (480B MoE)
-  "inclusionai/ling-2.6-1t",                     // Ling 2.6 (1T parameters)
-  "tencent/hy3-preview:free",                    // Tencent Hunyuan 3
-  "google/gemma-2-9b-it:free",                    // Gemma 2 9B fallback
-  "meta-llama/llama-3.1-8b-instruct:free",       // Llama 3.1 8B fallback
+  "qwen/qwen3-coder-480b-a35b-instruct:free",     // Qwen 3 Coder (Free)
+  "inclusionai/ling-2.6-1t:free",                // Ling 2.6 (Free)
+  "tencent/hy3-preview:free",                    // Tencent Hunyuan 3 (Free)
+  "google/gemma-2-9b-it:free",                    // Gemma 2 9B (Free)
+  "google/gemini-2.0-flash-exp:free",             // Gemini 2.0 Flash (Free)
 ];
 
 let currentModelIndex = 0;

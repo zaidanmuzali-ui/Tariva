@@ -177,7 +177,7 @@ export function HSCodeSearch() {
         hscode: r.hscode || r.hs_code || "0000.00.00"
       }));
 
-      const hasQuestions = aiResponse.questions && aiResponse.questions.length > 0 && (aiResponse.confidence < 75);
+      const hasQuestions = aiResponse.questions && aiResponse.questions.length > 0;
 
       if (hasQuestions) {
         // Confidence rendah & ada pertanyaan → tampilkan pertanyaan klarifikasi dulu

@@ -120,16 +120,15 @@ export const openrouterService = {
         4. Use current knowledge to verify Lartas (prohibitions/restrictions) from Indonesian Customs.
         
         CONFIDENCE SCORING RULES (CRITICAL):
-        - "confidence" is a number 0-100 representing how certain you are about the exact 8-digit HS Code classification.
-        - If you CANNOT determine the exact 8-digit HS Code (e.g., there are multiple sub-headings possible), confidence MUST be below 75.
-        - If the product description is vague (e.g. "kopi", "sepatu kulit"), confidence MUST be below 60.
-        - Only score >= 75 if you have enough details from the user to provide the precise 8-digit HS Code.
+        - "confidence" adalah angka 0-100.
+        - Jika deskripsi barang kurang detail (misal: cuma "kopi", "besi", "baju"), confidence WAJIB < 75.
+        - Jika ada lebih dari satu kemungkinan HS Code 8-digit yang valid, confidence WAJIB < 75.
+        - Jangan memberikan hasil 8-digit spesifik jika Anda ragu; lebih baik berikan pertanyaan.
         
         CLARIFICATION QUESTION RULES (CRITICAL):
-        - If confidence < 75, you MUST provide "questions" array with 1-3 clarifying questions to narrow down to the exact 8-digit HS Code.
-        - Each question MUST have "text" (the question in Bahasa Indonesia) and "options" (2-5 answer choices in Bahasa Indonesia).
-        - Questions should help differentiate between specific HS Codes (e.g., roasted vs unroasted, decaf vs regular, material composition, capacity).
-        - If confidence >= 75, "questions" should be an empty array [].
+        - Jika Anda merasa informasi barang belum cukup spesifik untuk menentukan 8-digit HS Code secara presisi, Anda WAJIB memberikan 1-3 pertanyaan di array "questions".
+        - Pertanyaan harus membantu membedakan antar HS Code (misal: ukuran, material, fungsi, kadar, dsb).
+        - Jika Anda memberikan pertanyaan, "questions" TIDAK BOLEH kosong.
         
         BTKI CONTEXT: ${btkiContext}
         FEEDBACK: ${feedbackContext}
